@@ -1,22 +1,25 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/custom_widgets/list_view_with_sticky_bttom_nav.dart';
+import 'package:music_app/screens/main_screen/main_screen.dart';
+import 'file:///F:/MobileApplicationsProjects/FlutterUiUx/music_app/lib/screens/main_screen/fragments/home_fragment.dart';
+import 'package:music_app/screens/splash_screen/state/splash_model.dart';
 import 'package:music_app/utils/AppColors.dart';
+import 'package:music_app/utils/router.dart';
+import 'package:provider/provider.dart';
 
-class SplashScreen extends StatefulWidget {
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
+//class SplashScreen extends StatefulWidget {
+//  @override
+//  _SplashScreenState createState() => _SplashScreenState();
+//}
 
-class _SplashScreenState extends State<SplashScreen> {
+class SplashScreen extends StatelessWidget {
 //  splash screen images
   List<String> _imagesPaths = [
-    "images/splash.png",
-    "images/splash_tow.png",
-    "images/splash_three.png",
+    "assets/images/splash.png",
+    "assets/images/splash_tow.png",
+    "assets/images/splash_three.png",
   ];
-
-  int _current = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +30,16 @@ class _SplashScreenState extends State<SplashScreen> {
           backgroundColor: AppColors.mainColor,
         ),
         body: ListViewWithStickyBottomNavigation(
-            children: <Widget>[_prepareCarousal(), _header()],
+            children: <Widget>[_prepareCarousal(context), _header()],
             bottomNavigation: Padding(
               padding: const EdgeInsets.only(bottom: 18.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   FlatButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Router.to(context, MainScreen());
+                      },
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -50,7 +55,8 @@ class _SplashScreenState extends State<SplashScreen> {
                               height: 30,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: AssetImage("images/right.png")),
+                                      image: AssetImage(
+                                          "assets/images/right.png")),
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(5)),
                             ),
@@ -62,28 +68,23 @@ class _SplashScreenState extends State<SplashScreen> {
             )));
   }
 
-  Widget _prepareCarousal() {
+  Widget _prepareCarousal(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height/2.1,
-
+      height: MediaQuery.of(context).size.height / 2.1,
       child: Column(
         children: <Widget>[
           Container(
               child: CarouselSlider(
-
             options: CarouselOptions(
                 enlargeCenterPage: true,
                 onPageChanged: (index, reson) {
-                  setState(() {
-                    _current = index;
-                  });
+                  context.read<SplashModel>().changeImageIndex(index);
                 }),
             items: _imagesPaths
                 .map((item) => Container(
                       child: Center(
                           child: Container(
-
-                            decoration: BoxDecoration(
+                        decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: AssetImage(item.toString()))),
                       )),
@@ -95,7 +96,9 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: _imagesPaths.map((url) {
               int index = _imagesPaths.indexOf(url);
-              return _current == index ? _selectedImage() : _unSelectedImage();
+              return context.watch<SplashModel>().current == index
+                  ? _selectedImage()
+                  : _unSelectedImage();
             }).toList(),
           ),
         ],
