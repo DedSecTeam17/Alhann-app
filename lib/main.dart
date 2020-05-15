@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/screens/main_screen/state/MainScreenModel.dart';
+import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/screens/splash_screen/splash_screen.dart';
 import 'package:music_app/screens/splash_screen/state/splash_model.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ void main() => runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SplashModel()),
         ChangeNotifierProvider(create: (_) => MainScreenModel()),
+        ChangeNotifierProvider(create: (_) => HomeModel()),
       ],
       child: MyApp(),
     ));

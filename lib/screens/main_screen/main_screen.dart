@@ -4,6 +4,7 @@ import 'package:music_app/screens/main_screen/fragments/notification_fragment.da
 import 'package:music_app/screens/main_screen/fragments/radio_fragment.dart';
 import 'package:music_app/screens/main_screen/fragments/tv_fragment.dart';
 import 'package:music_app/screens/main_screen/state/MainScreenModel.dart';
+import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/utils/AppColors.dart';
 import 'package:provider/provider.dart';
 
@@ -21,15 +22,15 @@ class MainScreen extends StatelessWidget {
     ];
     return Scaffold(
       body: _fragments[context.watch<MainScreenModel>().currentIndex],
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: !context.watch<HomeModel>().isDrawerOpend ? FloatingActionButton(
         backgroundColor: AppColors.secondaryColor,
         elevation: 15.0,
         onPressed: () {},
         child: Image.asset("assets/images/discover.png"),
-      ),
+      ) : SizedBox(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: !context.watch<HomeModel>().isDrawerOpend ?  BottomAppBar(
         shape: CircularNotchedRectangle(),
         color: Colors.blueGrey,
         clipBehavior: Clip.antiAlias,
@@ -68,7 +69,7 @@ class MainScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ) : SizedBox(),
     );
   }
 

@@ -66,6 +66,19 @@ flutter:
    - assets/images/home.png
    - assets/images/radio.png
    - assets/images/tv.png
+   - assets/images/avatar.png
+   - assets/images/crown.png
+   - assets/images/album.png
+   - assets/images/artists.png
+   - assets/images/avatar.png
+   - assets/images/crown.png
+   - assets/images/downloaded_items.png
+   - assets/images/fav.png
+   - assets/images/local_files.png
+   - assets/images/recent_history.png
+   - assets/images/soungs.png
+   - assets/images/youtube.png
+   - assets/images/exit.png
 
 #    - images/a_dot_burr.jpeg
 #    - images/a_dot_ham.jpeg

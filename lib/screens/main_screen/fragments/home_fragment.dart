@@ -1,7 +1,22 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/generated/i18n.dart';
+import 'package:music_app/screens/main_screen/fragments/drawer_fragments/album_fragment.dart';
+import 'package:music_app/screens/main_screen/fragments/drawer_fragments/artist_fragment.dart';
+import 'package:music_app/screens/main_screen/fragments/drawer_fragments/download_items.dart';
+import 'package:music_app/screens/main_screen/fragments/drawer_fragments/fav_fragment.dart';
+import 'package:music_app/screens/main_screen/fragments/drawer_fragments/local_files_fragments.dart';
+import 'package:music_app/screens/main_screen/fragments/drawer_fragments/recent_history_fragment.dart';
+import 'package:music_app/screens/main_screen/fragments/drawer_fragments/ytube_fragment.dart';
+import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/utils/AppColors.dart';
+
+import 'drawer_fragments/songs_fragment.dart';
+import 'home_fragment_with_open_drawer.dart';
+import 'home_widgets/home_widgets.dart';
+import 'package:provider/provider.dart';
 
 class Track {
   String path;
@@ -13,7 +28,7 @@ class Track {
 }
 
 class HomeFragment extends StatelessWidget {
-  List<Track> _tracks = [
+  static List<Track> _tracks = [
     Track(
         path: "assets/images/t_3.png",
         title: "I Dont`t Care",
@@ -40,7 +55,7 @@ class HomeFragment extends StatelessWidget {
         description: "Lil Nas"),
   ];
 
-  List<Track> _Toptracks = [
+  static List<Track> _Toptracks = [
     Track(
         path: "assets/images/top_1.png",
         title: "Closer (feat. Halsey)",
@@ -71,284 +86,103 @@ class HomeFragment extends StatelessWidget {
         title: "TAKI TAKI",
         description: "Cardi B, Selena Gomez ,Ozuna",
         duration: "3:13"),
+  ];
+
+  var drawerFragments = [
+    DrawerSongsFragment(
+      tracks: _tracks,
+      toptracks: _Toptracks,
+    ),
+    DrawerAlbumFragment(),
+    DrawerArtistsFragment(),
+    DrawerYouTubeFragment(),
+    DrawerFavFragment(),
+    DrawerRecentHistoryFragment(),
+    DrawerDownloadItemsFragment(),
+    DrawerLocalFilesFragment()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
-      body: ListView(
-        children: <Widget>[
-          _header(),
-          _featuredTracksList(context),
-          _topTrackList()
-        ],
-      ),
-    );
-  }
-
-  Widget _topTrackList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding:
-          const EdgeInsets.only(left: 15.0, right: 15, bottom: 8, top: 8),
-          child: Text(
-            "Top Tracks",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          ),
-        ),
-        ListView.builder(
-            primary: false,
-            shrinkWrap: true,
-            itemCount: _Toptracks.length,
-            itemBuilder: (ctx, index) {
-              Track track = _Toptracks[index];
-              return _topTrackItem(track);
-            }),
-      ],
-    );
-  }
-
-  Widget _topTrackItem(Track track) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0, bottom: 8, left: 18, right: 18),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    image: DecorationImage(
-                        image: AssetImage(track.path), fit: BoxFit.cover)),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: !context.watch<HomeModel>().isDrawerOpend
+          ? _appBar(context)
+          : AppBar(
+              backgroundColor: AppColors.mainColor,
+              elevation: 0,
+              leading: SizedBox(),
+            ),
+      body: !context.watch<HomeModel>().isDrawerOpend
+          ? ListView(
+              children: <Widget>[
+                drawerFragments[context.watch<HomeModel>().selectedDrawerItem]
+              ],
+            )
+          : Container(
+              color: AppColors.mainColor,
+              child: ListView(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 8.0, right: 8, bottom: 3, top: 3),
-                    child: Text(
-                      track.title,
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8),
-                    child: Text(
-                      track.description,
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(top :30.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                userProfile(),
+                                drawaerList(context),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 4.0, right: 4, top: 0),
+                            child: FlatButton(
+                                onPressed: () {},
+                                child: Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 4.0, right: 4),
+                                      child:
+                                          Image.asset("assets/images/exit.png"),
+                                    ),
+                                    Text(
+                                      "Sign Out",
+                                      style: TextStyle(color: Colors.white),
+                                    )
+                                  ],
+                                )),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        width: 1,
+                      ),
+                      homeFragmentPlaceHolder(
+                          context,
+                          drawerFragments[
+                              context.watch<HomeModel>().selectedDrawerItem])
+                    ],
                   )
                 ],
               ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8),
-            child: Text(
-              track.duration,
-              style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
-          )
-        ],
-      ),
     );
   }
 
-  Widget _featuredTracksList(context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Padding(
-          padding:
-              const EdgeInsets.only(left: 15.0, right: 15, bottom: 8, top: 8),
-          child: Text(
-            "Featured Tracks",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          ),
-        ),
-        SizedBox(
-          height: 180,
-          child: ListView.builder(
-//            primary: false,
-              shrinkWrap: true,
-              itemCount: _tracks.length,
-              scrollDirection: Axis.horizontal,
-
-//            scrollDirection: Axis.horizontal,
-              itemBuilder: (ctx, index) {
-                Track track = _tracks[index];
-                return _featuredTrackItem(track);
-              }),
-        )
-      ],
-    );
-  }
-
-  Widget _featuredTrackItem(Track track) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10.0, right: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Container(
-                width: 100,
-                height: 110,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    image: DecorationImage(
-                        image: AssetImage(track.path), fit: BoxFit.fill)),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 8.0, right: 8, bottom: 3, top: 3),
-              child: Text(
-                track.title,
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8),
-              child: Text(
-                track.description,
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _header() {
-    return Container(
-      decoration: BoxDecoration(
-          color: AppColors.mainColor,
-          image: DecorationImage(
-              image: AssetImage("assets/images/bg_image.png"),
-              fit: BoxFit.cover)),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 18.0, right: 18, bottom: 10, top: 5),
-              child: Text(
-                "//TRENDING",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 18.0, right: 18),
-              child: Text(
-                "Akcent feat Lidia Buble...",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 18.0, right: 18, bottom: 10, top: 5),
-              child: Text(
-                "-Kamelia",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  top: 18.0, bottom: 20, left: 18, right: 18),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      width: 80,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "PLAY",
-                              style: TextStyle(
-                                  fontSize: 10,
-                                  color: AppColors.mainColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Image.asset(
-                                "assets/images/play.png",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () {},
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          image: DecorationImage(
-                              image: AssetImage(
-                            "assets/images/share.png",
-                          )),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _appBar() {
+  Widget _appBar(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.mainColor,
       elevation: 0,
       leading: FlatButton(
-        onPressed: () {},
+        onPressed: () {
+          context.read<HomeModel>().changeDrawareState();
+        },
         child: Container(
           width: 35,
           height: 35,
