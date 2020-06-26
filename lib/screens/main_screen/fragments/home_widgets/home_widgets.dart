@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/screens/main_screen/fragments/home_fragment.dart';
+import 'package:music_app/screens/player_screen/player_screen.dart';
 import 'package:music_app/utils/AppColors.dart';
+import 'package:music_app/utils/router.dart';
 
 Widget header() {
   return Container(
@@ -131,16 +133,18 @@ Widget topTrackList({List<Track> tracks, bool shrink}) {
             Track track = tracks[index];
             return SizedOverflowBox(
               size: Size(100, 100),
-              child: _topTrackItem(track, shrink),
+              child: _topTrackItem(track, shrink, ctx),
             );
           }),
     ],
   );
 }
 
-Widget _topTrackItem(Track track, bool shrink) {
+Widget _topTrackItem(Track track, bool shrink, context) {
   return InkWell(
-    onTap: () {},
+    onTap: () {
+      Router.to(context, PlayerScreen());
+    },
     child: Padding(
       padding: const EdgeInsets.only(top: 8.0, bottom: 8, left: 18, right: 18),
       child: Row(
@@ -222,16 +226,18 @@ Widget featuredTracksList({context, tracks}) {
 //            scrollDirection: Axis.horizontal,
             itemBuilder: (ctx, index) {
               Track track = tracks[index];
-              return _featuredTrackItem(track);
+              return _featuredTrackItem(track, context);
             }),
       )
     ],
   );
 }
 
-Widget _featuredTrackItem(Track track) {
+Widget _featuredTrackItem(Track track, context) {
   return InkWell(
-    onTap: () {},
+    onTap: () {
+      Router.to(context, PlayerScreen());
+    },
     child: Padding(
       padding: const EdgeInsets.only(left: 10.0, right: 10),
       child: Column(

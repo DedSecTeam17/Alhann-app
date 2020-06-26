@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/generated/i18n.dart';
-import 'package:music_app/screens/main_screen/fragments/drawer_fragments/album_fragment.dart';
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/artist_fragment.dart';
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/download_items.dart';
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/fav_fragment.dart';
@@ -13,6 +12,7 @@ import 'package:music_app/screens/main_screen/fragments/drawer_fragments/ytube_f
 import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/utils/AppColors.dart';
 
+import 'drawer_fragments/album_screens/album_fragment.dart';
 import 'drawer_fragments/songs_fragment.dart';
 import 'home_fragment_with_open_drawer.dart';
 import 'home_widgets/home_widgets.dart';
@@ -124,44 +124,48 @@ class HomeFragment extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top :30.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                userProfile(),
-                                drawaerList(context),
-                              ],
+                      Padding(
+                        padding: const EdgeInsets.only(top :18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top :30.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  userProfile(),
+                                  drawaerList(context),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 4.0, right: 4, top: 0),
-                            child: FlatButton(
-                                onPressed: () {},
-                                child: Row(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 4.0, right: 4),
-                                      child:
-                                          Image.asset("assets/images/exit.png"),
-                                    ),
-                                    Text(
-                                      "Sign Out",
-                                      style: TextStyle(color: Colors.white),
-                                    )
-                                  ],
-                                )),
-                          )
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 4.0, right: 4, top: 0),
+                              child: FlatButton(
+                                  onPressed: () {},
+                                  child: Row(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 4.0, right: 4),
+                                        child:
+                                            Image.asset("assets/images/exit.png"),
+                                      ),
+                                      Text(
+                                        "Sign Out",
+                                        style: TextStyle(color: Colors.white),
+                                      )
+                                    ],
+                                  )),
+                            )
+                          ],
+                        ),
                       ),
                       SizedBox(
-                        width: 1,
+                        width: MediaQuery.of(context).size.width/22,
                       ),
                       homeFragmentPlaceHolder(
                           context,

@@ -26,12 +26,13 @@ class AppTextFiled extends StatelessWidget {
         decoration: InputDecoration(
             contentPadding: EdgeInsets.all(10),
             labelStyle: TextStyle(color: AppColors.mainColor),
+
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(25),
+              borderRadius: BorderRadius.circular(15),
             ),
             enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(25),
-                borderSide: BorderSide(color: AppColors.mainColor, width: 0)),
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: AppColors.mainColor, width: 0.5)),
             hintText: hint),
       ),
     );

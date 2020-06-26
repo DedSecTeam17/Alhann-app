@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 Widget homeFragmentPlaceHolder(BuildContext context, Widget item) {
   return Container(
-      width: MediaQuery.of(context).size.width / 2.3,
+      width:MediaQuery.of(context).size.width/2.3,
       height: MediaQuery.of(context).size.height / 1.3,
       decoration: BoxDecoration(
           color: Colors.white,

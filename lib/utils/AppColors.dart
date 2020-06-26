@@ -8,4 +8,8 @@ class AppColors {
   static final accent = HexColor("#4600D5");
 
   static final secondaryColor = HexColor("#3E2AD1");
+
+  static final greyWhite = HexColor("#DADADA");
+
+
 }

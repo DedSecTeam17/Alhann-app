@@ -94,20 +94,20 @@ class appBtn extends StatelessWidget {
   }
 }
 
-class appBtnWithLoading extends StatelessWidget {
+class AppBtnWithCustomChild extends StatelessWidget {
   Widget child;
   var width = 50.0;
   var height = 50.0;
 
   Function onTap;
 
-  appBtnWithLoading({this.child, this.width, this.height, this.onTap});
+  AppBtnWithCustomChild({this.child, this.width, this.height, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-        margin: EdgeInsets.all(25.0),
+        margin: EdgeInsets.all(15.0),
         height: 50,
         width: width == null ? MediaQuery.of(context).size.width : width,
         decoration: BoxDecoration(

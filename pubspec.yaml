@@ -79,6 +79,17 @@ flutter:
    - assets/images/soungs.png
    - assets/images/youtube.png
    - assets/images/exit.png
+   - assets/images/backword.png
+   - assets/images/bg.png
+   - assets/images/download_item.png
+   - assets/images/forward.png
+   - assets/images/left.png
+   - assets/images/loading.png
+   - assets/images/louder.png
+   - assets/images/mask_group.png
+   - assets/images/options.png
+   - assets/images/puse.png
+   - assets/images/mock_images/
 
 #    - images/a_dot_burr.jpeg
 #    - images/a_dot_ham.jpeg

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/screens/auth/sign_in.dart';
 import 'package:music_app/screens/main_screen/state/MainScreenModel.dart';
 import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/screens/splash_screen/splash_screen.dart';
 import 'package:music_app/screens/splash_screen/state/splash_model.dart';
+import 'package:music_app/utils/AppColors.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MultiProvider(
@@ -20,38 +22,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Wanassa',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red
       ),
       home: SplashScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "OK",
-          style: TextStyle(color: Colors.redAccent),
-        ),
-      ),
-      body: ListView(
-        children: <Widget>[
-          ListTile(
-            title: Text("items"),
-            leading: FlatButton(onPressed: () {}, child: Text("Click me ")),
-          )
-        ],
-      ),
-    );
-  }
-}
