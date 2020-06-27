@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/generated/i18n.dart';
-import 'package:music_app/screens/main_screen/fragments/drawer_fragments/artist_fragment.dart';
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/download_items.dart';
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/fav_fragment.dart';
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/local_files_fragments.dart';
@@ -13,6 +12,7 @@ import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/utils/AppColors.dart';
 
 import 'drawer_fragments/album_screens/album_fragment.dart';
+import 'drawer_fragments/artists_screen/artist_fragment.dart';
 import 'drawer_fragments/songs_fragment.dart';
 import 'home_fragment_with_open_drawer.dart';
 import 'home_widgets/home_widgets.dart';
