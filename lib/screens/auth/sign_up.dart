@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:music_app/custom_widgets/buttons.dart';
 import 'package:music_app/custom_widgets/custom_card.dart';
 import 'package:music_app/custom_widgets/text_filed.dart';
+import 'package:music_app/services/auth_service.dart';
 
 class SignUpScreen extends StatelessWidget {
   @override
@@ -71,7 +72,12 @@ class SignUpScreen extends StatelessWidget {
                       "Sign up",
                       style: TextStyle(color: Colors.white),
                     ),
-                    onTap: () {},
+                    onTap: () async {
+                      await AuthService.login(
+//                          userName: "Ali omer",
+                          password: "mohamed",
+                          identifier: "test@gmail.com");
+                    },
                   )
                 ],
               ),
