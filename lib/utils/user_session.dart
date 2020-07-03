@@ -60,6 +60,7 @@ class UserSessionHandler {
   }
 
   Future<bool> isAuth() async {
+    sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.get(TOKEN) != null;
   }
 }

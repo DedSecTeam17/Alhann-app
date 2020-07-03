@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/models/user_model.dart';
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/album_screens/album_detail_screen.dart';
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/artists_screen/artist_detail_screen.dart';
 import 'package:music_app/screens/main_screen/state/home_model.dart';
@@ -99,14 +100,16 @@ Widget albumItem(BuildContext context, Albums albums) {
   );
 }
 
-Widget artistSongItem(context, index, ArtistTracks tracks, Artists artists) {
+Widget artistSongItem(
+    BuildContext context, index, ArtistTracks tracks, Artists artists) {
   return InkWell(
     onTap: () {
       Router.to(
           context,
           PlayerScreen(
-            albumImageUrl: tracks.album.albumImageUrl.elementAt(0).url,
-            soundUrl: tracks.trackSoundUrl.elementAt(0).url,
+            albumImageUrl:
+                baseUrl + tracks.album.albumImageUrl.elementAt(0).url,
+            soundUrl: baseUrl + tracks.trackSoundUrl.elementAt(0).url,
             artist: artists.artistName,
             trackName: tracks.trackName,
           ));
@@ -144,30 +147,33 @@ Widget artistSongItem(context, index, ArtistTracks tracks, Artists artists) {
               ),
             ],
           ),
-          PopupMenuButton<Options>(
-            onSelected: (Options result) {},
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
-              const PopupMenuItem<Options>(
-                value: Options.AddToFav,
-                child: Text('Add to favorite'),
-              ),
-            ],
-          )
+          context.read<UserModel>().isAuth
+              ? PopupMenuButton<Options>(
+                  onSelected: (Options result) {},
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<Options>>[
+                    const PopupMenuItem<Options>(
+                      value: Options.AddToFav,
+                      child: Text('Add to favorite'),
+                    ),
+                  ],
+                )
+              : SizedBox()
         ],
       ),
     ),
   );
 }
 
-Widget albumSongItem(
-    context, index, Tracks tracks, String artistName, String albumUrl) {
+Widget albumSongItem(BuildContext context, index, Tracks tracks,
+    String artistName, String albumUrl) {
   return InkWell(
     onTap: () {
       Router.to(
           context,
           PlayerScreen(
-            albumImageUrl: baseUrl+albumUrl,
-            soundUrl: tracks.trackSoundUrl.elementAt(0).url,
+            albumImageUrl: baseUrl + albumUrl,
+            soundUrl: baseUrl + tracks.trackSoundUrl.elementAt(0).url,
             trackName: tracks.trackName,
             artist: artistName,
           ));
@@ -205,15 +211,18 @@ Widget albumSongItem(
               ),
             ],
           ),
-          PopupMenuButton<Options>(
-            onSelected: (Options result) {},
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
-              const PopupMenuItem<Options>(
-                value: Options.AddToFav,
-                child: Text('Add to favorite'),
-              ),
-            ],
-          )
+          context.read<UserModel>().isAuth
+              ? PopupMenuButton<Options>(
+                  onSelected: (Options result) {},
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<Options>>[
+                    const PopupMenuItem<Options>(
+                      value: Options.AddToFav,
+                      child: Text('Add to favorite'),
+                    ),
+                  ],
+                )
+              : SizedBox()
         ],
       ),
     ),

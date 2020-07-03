@@ -5,6 +5,7 @@ import 'package:music_app/custom_widgets/loading_widget.dart';
 import 'package:music_app/custom_widgets/snack_bar.dart';
 import 'package:music_app/custom_widgets/text_filed.dart';
 import 'package:music_app/models/user_model.dart';
+import 'package:music_app/screens/auth/sign_in.dart';
 import 'package:music_app/screens/main_screen/main_screen.dart';
 import 'package:music_app/utils/AppColors.dart';
 import 'package:music_app/utils/router.dart';
@@ -20,9 +21,6 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return Scaffold(
       key: _key,
       body: ListView(
@@ -55,7 +53,6 @@ class SignUpScreen extends StatelessWidget {
                         controller: _userName,
                         hint: "User name",
                         textInputType: TextInputType.text,
-
                         filedValidation: (String identifier) {
                           if (identifier.isEmpty) {
                             return "required";
@@ -66,7 +63,6 @@ class SignUpScreen extends StatelessWidget {
                         btnPadding: 10,
                         controller: _emailCtrl,
                         textInputType: TextInputType.emailAddress,
-
                         hint: "Email",
                         filedValidation: (String identifier) {
                           if (identifier.isEmpty) {
@@ -79,7 +75,6 @@ class SignUpScreen extends StatelessWidget {
                         controller: _passwordCtrl,
                         hint: "Password",
                         textInputType: TextInputType.text,
-
                         filedValidation: (String identifier) {
                           if (identifier.isEmpty) {
                             return "required";
@@ -94,9 +89,11 @@ class SignUpScreen extends StatelessWidget {
                                 style: TextStyle(color: Colors.white),
                               )
                             : Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: LoadingWidget(color: Colors.white,),
-                            ),
+                                padding: const EdgeInsets.all(8.0),
+                                child: LoadingWidget(
+                                  color: Colors.white,
+                                ),
+                              ),
                         onTap: () async {
                           if (_form.currentState.validate()) {
                             context.read<UserModel>().signUp(
@@ -112,7 +109,15 @@ class SignUpScreen extends StatelessWidget {
                             });
                           }
                         },
-                      )
+                      ),
+                      FlatButton(
+                          onPressed: () {
+                            Router.to(context, SignInScreen());
+                          },
+                          child: Text(
+                            "Already have account ?",
+                            style: TextStyle(color: AppColors.mainColor),
+                          ))
                     ],
                   )),
             ),

@@ -18,8 +18,13 @@ class UserModel with ChangeNotifier {
 
   User get currentUser => _currentUser;
 
+  bool get isAuth => _isAuth;
+
   checkIfAuth() async {
     _isAuth = await UserSessionHandler.getInstance().isAuth();
+    if (_isAuth) {
+      _currentUser = await UserSessionHandler.getInstance().getUser();
+    }
     notifyListeners();
   }
 
@@ -33,6 +38,8 @@ class UserModel with ChangeNotifier {
       _currentUser = signInResponse.login.user;
       await UserSessionHandler.getInstance()
           .setUserData(_currentUser, signInResponse.login.jwt);
+      _isAuth = await UserSessionHandler.getInstance().isAuth();
+
       notifyListeners();
       onExecuted(true, "done");
     } catch (e) {
@@ -53,6 +60,7 @@ class UserModel with ChangeNotifier {
       _currentUser = signInResponse.register.user;
       await UserSessionHandler.getInstance()
           .setUserData(_currentUser, signInResponse.register.jwt);
+      _isAuth = await UserSessionHandler.getInstance().isAuth();
       notifyListeners();
 
       onExecuted(true, "User created successfully");
@@ -61,5 +69,12 @@ class UserModel with ChangeNotifier {
       notifyListeners();
       onExecuted(false, e.toString());
     }
+  }
+
+  signOut() async {
+    _isAuth = false;
+    _currentUser = null;
+    await UserSessionHandler.getInstance().destroyUser();
+    notifyListeners();
   }
 }

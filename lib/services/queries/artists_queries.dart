@@ -7,6 +7,7 @@ query{
       url
     },
     tracks{
+    id,
       track_name,
       track_sound_url{
         url
@@ -29,7 +30,7 @@ query{
       
     },
     tracks{
-      track_name,track_sound_url{url},
+     id, track_name,track_sound_url{url},
   
     },
     }

@@ -108,7 +108,7 @@ class ArtistDetail extends StatelessWidget {
               primary: false,
               shrinkWrap: true,
               itemBuilder: (ctx, index) {
-                 return artistSongItem(ctx, index + 1,artists.tracks.elementAt(0),artists);
+                 return artistSongItem(ctx, index + 1,artists.tracks.elementAt(index),artists);
               })
         ],
       ),

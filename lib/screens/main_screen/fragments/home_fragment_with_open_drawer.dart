@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:music_app/models/user_model.dart';
 import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/utils/AppColors.dart';
 
@@ -146,7 +148,7 @@ Widget drawerListItem(
   );
 }
 
-Widget userProfile() {
+Widget userProfile( bool ok) {
   return Container(
     width: 180,
     height: 70,
@@ -167,7 +169,7 @@ Widget userProfile() {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                "AF Shinchan",
+                "asd",
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),

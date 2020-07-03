@@ -5,6 +5,7 @@ import 'package:music_app/custom_widgets/loading_widget.dart';
 import 'package:music_app/custom_widgets/snack_bar.dart';
 import 'package:music_app/custom_widgets/text_filed.dart';
 import 'package:music_app/models/user_model.dart';
+import 'package:music_app/screens/auth/sign_up.dart';
 import 'package:music_app/screens/main_screen/main_screen.dart';
 import 'package:music_app/utils/AppColors.dart';
 import 'package:music_app/utils/router.dart';
@@ -87,7 +88,15 @@ class SignInScreen extends StatelessWidget {
                         }
                       });
                     },
-                  )
+                  ),
+                  FlatButton(
+                      onPressed: () {
+                        Router.to(context, SignUpScreen());
+                      },
+                      child: Text(
+                        "Create new account ?",
+                        style: TextStyle(color: AppColors.mainColor),
+                      ))
                 ],
               ),
             ),

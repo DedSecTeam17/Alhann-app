@@ -36,7 +36,7 @@ class _DrawerSongsFragmentState extends State<DrawerSongsFragment> {
             : LoadingWidget(
                 color: AppColors.mainColor,
               ),
-        !context.watch<TrackModel>().isLoadingFeaturedTracks
+        !context.watch<TrackModel>().isLoadingTopTracks
             ? topTrackList(
                 tracks: context.watch<TrackModel>().topTracks,
                 shrink: context.watch<HomeModel>().isDrawerOpend)

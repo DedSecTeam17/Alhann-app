@@ -10,6 +10,7 @@ Widget ListViewWithStickyBottomNavigation(
       Expanded(
         child: ListView(
           shrinkWrap: shrink_wrap,
+
           children: children,
         ),
       ),

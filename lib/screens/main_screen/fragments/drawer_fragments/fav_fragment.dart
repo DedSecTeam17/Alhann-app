@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/models/user_model.dart';
+import 'package:music_app/screens/auth/sign_in.dart';
 import 'package:music_app/screens/main_screen/fragments/home_fragment.dart';
 import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/screens/player_screen/player_screen.dart';
@@ -9,19 +11,54 @@ import 'package:provider/provider.dart';
 class DrawerFavFragment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        primary: false,
-        shrinkWrap: true,
-        itemCount: 10,
-        itemBuilder: (ctx, index) {
-          return favItem(
-              context,
-              new Track(
-                  title: "Song name",
-                  description: "Artist name",
-                  duration: "2:03"),
-              context.read<HomeModel>().isDrawerOpend);
-        });
+    return context.watch<UserModel>().isAuth
+        ? ListView.builder(
+            primary: false,
+            shrinkWrap: true,
+            itemCount: 10,
+            itemBuilder: (ctx, index) {
+              return favItem(
+                  context,
+                  new Track(
+                      title: "Song name",
+                      description: "Artist name",
+                      duration: "2:03"),
+                  context.read<HomeModel>().isDrawerOpend);
+            })
+        : Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: !context.watch<HomeModel>().isDrawerOpend
+                        ? MediaQuery.of(context).size.height / 2.8
+                        : MediaQuery.of(context).size.height / 6),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("Sign in to add songs to your favorites"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        onPressed: () {
+                          Router.to(context, SignInScreen());
+                        },
+                        child: Text(
+                          "Sign In",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: AppColors.mainColor,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
   }
 
   Widget favItem(BuildContext context, Track track, bool shrink) {
@@ -30,7 +67,7 @@ class DrawerFavFragment extends StatelessWidget {
         Router.to(context, PlayerScreen());
       },
       child: Container(
-        margin: EdgeInsets.only(left : 8 , right: 8 , bottom: 2 , top: 2),
+        margin: EdgeInsets.only(left: 8, right: 8, bottom: 2, top: 2),
         decoration: BoxDecoration(
             color: AppColors.mainColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10)),
@@ -53,7 +90,6 @@ class DrawerFavFragment extends StatelessWidget {
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(

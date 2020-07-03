@@ -9,7 +9,7 @@ class LoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return SpinKitFoldingCube(
+    return SpinKitCircle(
       color: color != null ? color : Colors.white,
       size: 40.0,
     );

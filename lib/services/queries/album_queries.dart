@@ -7,6 +7,7 @@ query{
     },
         album_name,
     artist{
+    id,
       artist_name,
       
     },
