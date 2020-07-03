@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/custom_widgets/album_artist_widgets.dart';
+import 'package:music_app/screens/main_screen/fragments/drawer_fragments/album_screens/album_detail_screen.dart';
+import 'package:music_app/services/app_graphql_client.dart';
+import 'package:music_app/services/responses/all_albums_response.dart';
+import 'package:music_app/services/responses/all_artists_response.dart';
 import 'package:music_app/utils/AppColors.dart';
+import 'package:music_app/utils/router.dart';
 
 class ArtistDetail extends StatelessWidget {
+  Artists artists;
+
+  ArtistDetail({this.artists});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,8 +22,8 @@ class ArtistDetail extends StatelessWidget {
               floating: false,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                  background: Image.asset(
-                "assets/images/mock_images/artist_test.jpg",
+                  background: Image.network(
+                baseUrl+artists.artistImageUrl.elementAt(0).url,
                 fit: BoxFit.cover,
               )),
             ),
@@ -40,13 +48,13 @@ class ArtistDetail extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            "Artist Name",
+           artists.artistName,
             style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 8),
             child: Text(
-              "2 Albums . 21 songs . 23:33:01",
+              "${artists.albums.length} Albums . ${artists.tracks.length} songs . 23:33:01",
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
           )
@@ -71,10 +79,10 @@ class ArtistDetail extends StatelessWidget {
           Container(
             height: 150,
             child: ListView.builder(
-                itemCount: 10,
+                itemCount: artists.albums.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (ctx, index) {
-                  return albumArtist();
+                  return albumArtist(artists.albums.elementAt(index),ctx);
                 }),
           )
         ],
@@ -96,36 +104,47 @@ class ArtistDetail extends StatelessWidget {
                 color: AppColors.mainColor),
           ),
           ListView.builder(
-              itemCount: 10,
+              itemCount: artists.tracks.length,
               primary: false,
               shrinkWrap: true,
               itemBuilder: (ctx, index) {
-                return songItem(ctx, index + 1);
+                 return artistSongItem(ctx, index + 1,artists.tracks.elementAt(0),artists);
               })
         ],
       ),
     );
   }
 
-  Widget albumArtist() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: <Widget>[
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                    image:
-                        AssetImage("assets/images/mock_images/album_img.jpg"))),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8),
-            child: Text("Album name"),
-          )
-        ],
+  Widget albumArtist(ArtistAlbums album,context) {
+    return InkWell(
+      onTap: (){
+         Router.to(context, AlbumDetail(albums: Albums.fromJson(album.toJson())));
+
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                      image:
+                           NetworkImage(baseUrl+album.albumImageUrl.elementAt(0).url))),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Row(
+                children: <Widget>[
+                  Text(album.albumName.length>15 ? album.albumName.substring(0,15)+".." : album.albumName),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

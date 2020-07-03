@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/custom_widgets/album_artist_widgets.dart';
 import 'package:music_app/screens/player_screen/player_screen.dart';
+import 'package:music_app/services/app_graphql_client.dart';
+import 'package:music_app/services/responses/all_albums_response.dart';
 import 'package:music_app/utils/AppColors.dart';
 import 'package:music_app/utils/router.dart';
 
 class AlbumDetail extends StatelessWidget {
+  Albums albums;
+
+  AlbumDetail({this.albums});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,13 +23,16 @@ class AlbumDetail extends StatelessWidget {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
-                    title: Text("Album Title",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        )),
-                    background: Image.asset(
-                      "assets/images/mock_images/album_img.jpg",
+                    title: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(albums.albumName,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          )),
+                    ),
+                    background: Image.network(
+                      baseUrl + albums.albumImageUrl.elementAt(0).url,
                       fit: BoxFit.cover,
                     )),
               ),
@@ -35,15 +44,19 @@ class AlbumDetail extends StatelessWidget {
               ListView.builder(
                   primary: false,
                   shrinkWrap: true,
-                  itemCount: 10,
+                  itemCount: albums.tracks.length,
                   itemBuilder: (ctx, index) {
-                    return songItem( context,index + 1);
+                    return albumSongItem(
+                        context,
+                        index + 1,
+                        albums.tracks.elementAt(index),
+                        albums.artist.artistName,
+                        albums.albumImageUrl.elementAt(0).url);
                   })
             ],
           )),
     );
   }
-
 
   //favorite
 

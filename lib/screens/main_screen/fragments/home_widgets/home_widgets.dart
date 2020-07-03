@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/screens/main_screen/fragments/home_fragment.dart';
 import 'package:music_app/screens/player_screen/player_screen.dart';
+import 'package:music_app/services/app_graphql_client.dart';
+import 'package:music_app/services/responses/home_tracks_response.dart';
 import 'package:music_app/utils/AppColors.dart';
 import 'package:music_app/utils/router.dart';
 
@@ -113,7 +115,7 @@ Widget header() {
   );
 }
 
-Widget topTrackList({List<Track> tracks, bool shrink}) {
+Widget topTrackList({List<HomeTrack> tracks, bool shrink}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
@@ -130,7 +132,7 @@ Widget topTrackList({List<Track> tracks, bool shrink}) {
           shrinkWrap: true,
           itemCount: tracks.length,
           itemBuilder: (ctx, index) {
-            Track track = tracks[index];
+            HomeTrack track = tracks[index];
             return SizedOverflowBox(
               size: Size(100, 100),
               child: _topTrackItem(track, shrink, ctx),
@@ -140,10 +142,17 @@ Widget topTrackList({List<Track> tracks, bool shrink}) {
   );
 }
 
-Widget _topTrackItem(Track track, bool shrink, context) {
+Widget _topTrackItem(HomeTrack track, bool shrink, context) {
   return InkWell(
     onTap: () {
-      Router.to(context, PlayerScreen());
+      Router.to(
+          context,
+          PlayerScreen(
+            albumImageUrl: baseUrl + track.album.albumImageUrl.elementAt(0).url,
+            artist: track.artist.artistName,
+            trackName: track.track.trackName,
+            soundUrl: baseUrl + track.track.trackSoundUrl.elementAt(0).url,
+          ));
     },
     child: Padding(
       padding: const EdgeInsets.only(top: 8.0, bottom: 8, left: 18, right: 18),
@@ -158,7 +167,9 @@ Widget _topTrackItem(Track track, bool shrink, context) {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     image: DecorationImage(
-                        image: AssetImage(track.path), fit: BoxFit.cover)),
+                        image: NetworkImage(baseUrl +
+                            track.album.albumImageUrl.elementAt(0).url),
+                        fit: BoxFit.cover)),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +178,9 @@ Widget _topTrackItem(Track track, bool shrink, context) {
                     padding: const EdgeInsets.only(
                         left: 8.0, right: 8, bottom: 3, top: 3),
                     child: Text(
-                      !shrink ? track.title : track.title.substring(0, 5),
+                      !shrink
+                          ? track.track.trackName
+                          : track.track.trackName.substring(0, 5),
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
@@ -176,8 +189,8 @@ Widget _topTrackItem(Track track, bool shrink, context) {
                     padding: const EdgeInsets.only(left: 8.0, right: 8),
                     child: Text(
                       !shrink
-                          ? track.description
-                          : track.description.substring(0, 5),
+                          ? track.artist.artistName
+                          : track.artist.artistName.substring(0, 5),
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   )
@@ -189,7 +202,7 @@ Widget _topTrackItem(Track track, bool shrink, context) {
               ? Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8),
                   child: Text(
-                    track.duration,
+                    "2:33",
                     style: TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 )
@@ -202,7 +215,7 @@ Widget _topTrackItem(Track track, bool shrink, context) {
   );
 }
 
-Widget featuredTracksList({context, tracks}) {
+Widget featuredTracksList({context, List<HomeTrack> tracks}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
@@ -225,7 +238,7 @@ Widget featuredTracksList({context, tracks}) {
 
 //            scrollDirection: Axis.horizontal,
             itemBuilder: (ctx, index) {
-              Track track = tracks[index];
+              HomeTrack track = tracks[index];
               return _featuredTrackItem(track, context);
             }),
       )
@@ -233,10 +246,17 @@ Widget featuredTracksList({context, tracks}) {
   );
 }
 
-Widget _featuredTrackItem(Track track, context) {
+Widget _featuredTrackItem(HomeTrack track, context) {
   return InkWell(
     onTap: () {
-      Router.to(context, PlayerScreen());
+      Router.to(
+          context,
+          PlayerScreen(
+            albumImageUrl: baseUrl + track.album.albumImageUrl.elementAt(0).url,
+            soundUrl: baseUrl + track.track.trackSoundUrl.elementAt(0).url,
+            artist: track.artist.artistName,
+            trackName: track.track.trackName,
+          ));
     },
     child: Padding(
       padding: const EdgeInsets.only(left: 10.0, right: 10),
@@ -246,19 +266,21 @@ Widget _featuredTrackItem(Track track, context) {
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: Container(
-              width: 100,
+              width: 120,
               height: 110,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   image: DecorationImage(
-                      image: AssetImage(track.path), fit: BoxFit.fill)),
+                      image: NetworkImage(
+                          baseUrl + track.album.albumImageUrl.elementAt(0).url),
+                      fit: BoxFit.cover)),
             ),
           ),
           Padding(
             padding:
                 const EdgeInsets.only(left: 8.0, right: 8, bottom: 3, top: 3),
             child: Text(
-              track.title,
+              track.track.trackName,
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             ),
@@ -266,7 +288,7 @@ Widget _featuredTrackItem(Track track, context) {
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8),
             child: Text(
-              track.description,
+              track.artist.artistName,
               style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
           )

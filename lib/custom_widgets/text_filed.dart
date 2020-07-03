@@ -22,7 +22,8 @@ class AppTextFiled extends StatelessWidget {
         textAlign: TextAlign.center,
         validator: filedValidation,
         controller: controller,
-        keyboardType: textInputType,
+//        keyboardType: textInputType,
+//      autofocus: true,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.all(10),
             labelStyle: TextStyle(color: AppColors.mainColor),

@@ -3,15 +3,18 @@ import 'package:music_app/screens/main_screen/fragments/drawer_fragments/album_s
 import 'package:music_app/screens/main_screen/fragments/drawer_fragments/artists_screen/artist_detail_screen.dart';
 import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/screens/player_screen/player_screen.dart';
+import 'package:music_app/services/app_graphql_client.dart';
+import 'package:music_app/services/responses/all_albums_response.dart';
+import 'package:music_app/services/responses/all_artists_response.dart';
 import 'package:music_app/utils/router.dart';
 import 'package:provider/provider.dart';
 
-Widget artistItem(BuildContext context) {
+Widget artistItem(BuildContext context, Artists artists) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: InkWell(
       onTap: () {
-        Router.to(context, ArtistDetail());
+        Router.to(context, ArtistDetail(artists: artists));
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,20 +27,21 @@ Widget artistItem(BuildContext context) {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                      image: AssetImage(
-                          "assets/images/mock_images/artist_test.jpg"),fit: BoxFit.fill)),
+                      image: NetworkImage(
+                          baseUrl + artists.artistImageUrl.elementAt(0).url),
+                      fit: BoxFit.cover)),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 18.0, right: 18, top: 8, bottom: 8),
+            padding:
+                const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
             child: Row(
               children: <Widget>[
                 Expanded(
                     child: Text(
-                      "Artist name",
-                      style: TextStyle(fontSize: 18),
-                    )),
+                  artists.artistName,
+                  style: TextStyle(fontSize: 18),
+                )),
               ],
             ),
           ),
@@ -49,50 +53,63 @@ Widget artistItem(BuildContext context) {
 
 //album
 //height
-Widget albumItem(BuildContext context ) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: InkWell(
-      onTap: () {
-        Router.to(context, AlbumDetail());
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(0.0),
-              width: context.read<HomeModel>().isDrawerOpend ? 150 : 180,
-              height: context.read<HomeModel>().isDrawerOpend ? 150 :180,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                      image: AssetImage(
-                          "assets/images/mock_images/album_img.jpg"),fit: BoxFit.fill)),
+Widget albumItem(BuildContext context, Albums albums) {
+  return Container(
+    height: 100,
+    width: 150,
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: () {
+          Router.to(context, AlbumDetail(albums: albums));
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(0.0),
+                width: context.read<HomeModel>().isDrawerOpend ? 150 : 180,
+                height: context.read<HomeModel>().isDrawerOpend ? 150 : 180,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                        image: NetworkImage(
+                            baseUrl + albums.albumImageUrl.elementAt(0).url),
+                        fit: BoxFit.fill)),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                left: 18.0, right: 18, top: 8, bottom: 8),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                    child: Text(
-                      "Album name",
-                      style: TextStyle(fontSize: 18),
-                    )),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 18.0, right: 18, top: 8, bottom: 8),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Text(
+                    albums.albumName,
+                    style: TextStyle(fontSize: 18),
+                  )),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
 }
-Widget songItem(context, index) {
+
+Widget artistSongItem(context, index, ArtistTracks tracks, Artists artists) {
   return InkWell(
     onTap: () {
-      Router.to(context, PlayerScreen());
+      Router.to(
+          context,
+          PlayerScreen(
+            albumImageUrl: tracks.album.albumImageUrl.elementAt(0).url,
+            soundUrl: tracks.trackSoundUrl.elementAt(0).url,
+            artist: artists.artistName,
+            trackName: tracks.trackName,
+          ));
     },
     child: Padding(
       padding: const EdgeInsets.all(8.0),
@@ -113,15 +130,14 @@ Widget songItem(context, index) {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        "Song title ",
+                        tracks.trackName,
                         style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold),
+                            color: Colors.black54, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0, right: 8),
-                      child: Text("Artist name "),
+                      child: Text(artists.artistName),
                     ),
                   ],
                 ),
@@ -143,4 +159,63 @@ Widget songItem(context, index) {
   );
 }
 
-
+Widget albumSongItem(
+    context, index, Tracks tracks, String artistName, String albumUrl) {
+  return InkWell(
+    onTap: () {
+      Router.to(
+          context,
+          PlayerScreen(
+            albumImageUrl: baseUrl+albumUrl,
+            soundUrl: tracks.trackSoundUrl.elementAt(0).url,
+            trackName: tracks.trackName,
+            artist: artistName,
+          ));
+    },
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(index.toString()),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        tracks.trackName,
+                        style: TextStyle(
+                            color: Colors.black54, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8),
+                      child: Text(artistName),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          PopupMenuButton<Options>(
+            onSelected: (Options result) {},
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
+              const PopupMenuItem<Options>(
+                value: Options.AddToFav,
+                child: Text('Add to favorite'),
+              ),
+            ],
+          )
+        ],
+      ),
+    ),
+  );
+}

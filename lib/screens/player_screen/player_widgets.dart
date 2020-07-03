@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/custom_widgets/custom_card.dart';
 import 'package:music_app/utils/AppColors.dart';
+import 'package:music_app/utils/hex_color.dart';
 
-Widget player() {
+Widget player(
+    {String trackName, String artist, String albumImageUrl, String soundUrl}) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        _trackImage(),
-        _trackInfo(),
+        _trackImage(albumImageUrl),
+        _trackInfo(artist, trackName),
         _trackOptions(),
         _timeAndSeeker(),
         _controls()
@@ -17,7 +20,7 @@ Widget player() {
   );
 }
 
-Widget _trackImage() {
+Widget _trackImage(String albumImageUrl) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
@@ -25,29 +28,33 @@ Widget _trackImage() {
         width: 200,
         height: 200,
         decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("assets/images/mask_group.png"))),
+            borderRadius: BorderRadius.circular(200),
+            boxShadow: [BoxShadow(color: HexColor("#e4e9ed"), blurRadius: 10)],
+            image: DecorationImage(image: NetworkImage(albumImageUrl))),
       )
     ],
   );
 }
 
-Widget _trackInfo() {
-  return Column(
-    children: <Widget>[
-      Text(
-        "Sucker",
-        style: TextStyle(
-            fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          "Jonhans brotehrs",
-          style: TextStyle(fontSize: 15, color: Colors.grey),
+Widget _trackInfo(String artist, String trackName) {
+  return Padding(
+    padding: const EdgeInsets.all(12.0),
+    child: Column(
+      children: <Widget>[
+        Text(
+          trackName,
+          style: TextStyle(
+              fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
         ),
-      ),
-    ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            artist,
+            style: TextStyle(fontSize: 15, color: Colors.grey),
+          ),
+        ),
+      ],
+    ),
   );
 }
 

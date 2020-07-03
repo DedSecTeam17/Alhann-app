@@ -5,6 +5,12 @@ import 'package:music_app/screens/player_screen/player_widgets.dart';
 import 'package:music_app/utils/AppColors.dart';
 
 class PlayerScreen extends StatelessWidget {
+  String albumImageUrl;
+  String soundUrl;
+  String artist;
+  String trackName;
+
+  PlayerScreen({@required this.albumImageUrl, @required this.soundUrl,@required this.artist , @required this.trackName});
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +37,14 @@ class PlayerScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SliverList(delegate: SliverChildBuilderDelegate(
-                  (_, index) => player(),
-              childCount: 1
-            ))
+            SliverList(
+                delegate: SliverChildBuilderDelegate(
+                    (_, index) => player(
+                        albumImageUrl: albumImageUrl,
+                        soundUrl: soundUrl,
+                        artist: artist,
+                        trackName: trackName),
+                    childCount: 1))
           ]),
     );
   }

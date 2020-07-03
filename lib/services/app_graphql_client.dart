@@ -1,9 +1,10 @@
 import 'package:graphql/client.dart';
+ const baseUrl = "http://10.0.2.2:1337";
 
 class AppGraphQlClient {
   static GraphQLClient getClient({String token}) {
     final HttpLink httpLink = HttpLink(
-      uri: 'http://10.0.2.2:1337/graphql',
+      uri: '$baseUrl/graphql',
     );
     if (token != null) {
       final AuthLink _authLink = AuthLink(

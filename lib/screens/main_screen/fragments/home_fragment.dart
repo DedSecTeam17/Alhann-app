@@ -91,8 +91,7 @@ class HomeFragment extends StatelessWidget {
 
   var drawerFragments = [
     DrawerSongsFragment(
-      tracks: _tracks,
-      toptracks: _Toptracks,
+
     ),
     DrawerAlbumFragment(),
     DrawerArtistsFragment(),
