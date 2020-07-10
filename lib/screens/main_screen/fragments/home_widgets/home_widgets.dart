@@ -180,7 +180,7 @@ Widget _topTrackItem(HomeTrack track, bool shrink, context) {
                     child: Text(
                       !shrink
                           ? track.track.trackName
-                          : track.track.trackName.substring(0, 5),
+                          : track.track.trackName.length>5 ? track.track.trackName.substring(0, 5) : track.track.trackName,
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),

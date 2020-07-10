@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/screens/auth/sign_in.dart';
 import 'package:music_app/screens/auth/sign_up.dart';
@@ -24,7 +25,7 @@ void main() => runApp(MultiProvider(
         ChangeNotifierProvider(create: (_) => AlbumModel()),
         ChangeNotifierProvider(create: (_) => ArtistModel()),
       ],
-      child: MyApp(),
+      child:AudioServiceWidget(child:  MyApp(),),
     ));
 
 class MyApp extends StatefulWidget {
@@ -52,3 +53,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+

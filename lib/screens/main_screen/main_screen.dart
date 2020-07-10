@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/custom_widgets/list_view_with_sticky_bttom_nav.dart';
 import 'package:music_app/screens/main_screen/fragments/home_fragment.dart';
@@ -8,11 +11,37 @@ import 'package:music_app/screens/main_screen/state/MainScreenModel.dart';
 import 'package:music_app/screens/main_screen/state/home_model.dart';
 import 'package:music_app/utils/AppColors.dart';
 import 'package:music_app/utils/hex_color.dart';
+import 'package:music_app/utils/music_player_tools/audio_stream.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 class MainScreen extends StatelessWidget {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  final BehaviorSubject<double> _dragPositionSubject =
+      BehaviorSubject.seeded(null);
+
+  Widget positionIndicator(MediaItem mediaItem, PlaybackState state) {
+    double seekPos;
+    return StreamBuilder(
+      stream: Rx.combineLatest2<double, double, double>(
+          _dragPositionSubject.stream,
+          Stream.periodic(Duration(milliseconds: 200)),
+          (dragPosition, _) => dragPosition),
+      builder: (context, snapshot) {
+        double position =
+            snapshot.data ?? state.currentPosition.inMilliseconds.toDouble();
+        double duration = mediaItem?.duration?.inMilliseconds?.toDouble();
+        return duration != null
+            ? LinearProgressIndicator(
+                value: position / duration,
+                valueColor: context.watch<HomeModel>().isDrawerOpend ?  AlwaysStoppedAnimation<Color>(AppColors.accent) :  AlwaysStoppedAnimation<Color>(AppColors.mainColor),
+                backgroundColor: AppColors.mainColor.withOpacity(0.2),
+              )
+            : SizedBox();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,78 +52,123 @@ class MainScreen extends StatelessWidget {
       NotificationFragment()
     ];
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(
-              child: _fragments[context.watch<MainScreenModel>().currentIndex]),
-          Container(
-              // This align moves the children to the bottom
-              child: Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  // This container holds all the children that will be aligned
-                  // on the bottom and should not scroll with the above ListView
-                  child: Container(
-                    height: 63,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(color: HexColor("#e4e9ed"), blurRadius: 0)
-                        ],
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(5),
-                            topRight: Radius.circular(5))),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          height: 2.2,
-                          child: LinearProgressIndicator(
-                            value: 0.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.accent),
-                             backgroundColor: AppColors.mainColor.withOpacity(0.2),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(1),
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              "assets/images/t_2.png"),
-                                          fit: BoxFit.cover)),
+      body: AudioServiceWidget(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+                child:
+                    _fragments[context.watch<MainScreenModel>().currentIndex]),
+            StreamBuilder<ScreenState>(
+                stream: ScreenStateStream,
+                builder: (context, snapshot) {
+                  final screenState = snapshot.data;
+                  final queue = screenState?.queue;
+                  final mediaItem = screenState?.mediaItem;
+                  final state = screenState?.playbackState;
+                  final processingState =
+                      state?.processingState ?? AudioProcessingState.none;
+                  final playing = state?.playing ?? false;
+
+                  return processingState != AudioProcessingState.none
+                      ? Container(
+                          // This align moves the children to the bottom
+                          child: Align(
+                              alignment: FractionalOffset.bottomCenter,
+                              // This container holds all the children that will be aligned
+                              // on the bottom and should not scroll with the above ListView
+                              child: Container(
+                                height: 64,
+                                decoration: BoxDecoration(
+//                                    boxShadow: [
+//                                      BoxShadow(
+//                                          color: HexColor("#e4e9ed"),
+//                                          blurRadius: 0)
+//                                    ],
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(5),
+                                        topRight: Radius.circular(5))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      height: 2.5,
+                                      child:
+                                          positionIndicator(mediaItem, state),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Row(
+                                          children: <Widget>[
+                                            Container(
+                                              width: 60,
+                                              height: 60,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(1),
+                                                  image: DecorationImage(
+                                                      image: NetworkImage(
+                                                          mediaItem.artUri),
+                                                      fit: BoxFit.cover)),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    mediaItem.title,
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    mediaItem.artist,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            IconButton(
+                                                icon:
+                                                    Icon(Icons.favorite_border),
+                                                onPressed: () {}),
+                                            IconButton(
+                                                icon: playing
+                                                    ? Icon(Icons.pause)
+                                                    : Icon(Icons.play_arrow),
+                                                onPressed: () {
+                                                  if (playing) {
+                                                    AudioService.pause();
+                                                  } else {
+                                                    AudioService.play();
+                                                  }
+                                                }),
+                                          ],
+                                        )
+                                      ],
+                                    )
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "Here We Go Again",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-                                IconButton(
-                                    icon: Icon(Icons.favorite_border),
-                                    onPressed: () {}),
-                                IconButton(
-                                    icon: Icon(Icons.pause), onPressed: () {}),
-                              ],
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  )))
-        ],
+                              )))
+                      : SizedBox();
+                })
+          ],
+        ),
       ),
 //      floatingActionButton: !context.watch<HomeModel>().isDrawerOpend
 //          ? FloatingActionButton(

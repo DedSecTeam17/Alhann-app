@@ -1,16 +1,53 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/custom_widgets/detail_scaffold.dart';
 import 'package:music_app/screens/player_screen/player_widgets.dart';
 import 'package:music_app/utils/AppColors.dart';
+import 'package:rxdart/rxdart.dart';
 
-class PlayerScreen extends StatelessWidget {
+class PlayerScreen extends StatefulWidget {
   String albumImageUrl;
   String soundUrl;
   String artist;
   String trackName;
 
-  PlayerScreen({@required this.albumImageUrl, @required this.soundUrl,@required this.artist , @required this.trackName});
+  PlayerScreen(
+      {@required this.albumImageUrl,
+      @required this.soundUrl,
+      @required this.artist,
+      @required this.trackName});
+
+  @override
+  _PlayerScreenState createState() => _PlayerScreenState(
+      albumImageUrl: albumImageUrl,
+      soundUrl: soundUrl,
+      artist: artist,
+      trackName: trackName);
+}
+
+class _PlayerScreenState extends State<PlayerScreen> {
+  String albumImageUrl;
+  String soundUrl;
+  String artist;
+  String trackName;
+
+  _PlayerScreenState(
+      {@required this.albumImageUrl,
+      @required this.soundUrl,
+      @required this.artist,
+      @required this.trackName});
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (AudioService.running) {
+      AudioService.stop().then((value) {
+        print("Stoped succcessfully");
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +76,7 @@ class PlayerScreen extends StatelessWidget {
             ),
             SliverList(
                 delegate: SliverChildBuilderDelegate(
-                    (_, index) => player(
+                    (_, index) => Player(
                         albumImageUrl: albumImageUrl,
                         soundUrl: soundUrl,
                         artist: artist,
