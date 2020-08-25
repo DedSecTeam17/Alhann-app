@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_app/custom_widgets/custom_card.dart';
 import 'package:music_app/custom_widgets/loading_widget.dart';
+import 'package:music_app/models/album_model.dart';
 import 'package:music_app/utils/AppColors.dart';
 import 'package:music_app/utils/hex_color.dart';
 import 'package:music_app/utils/music_player_tools/audio_player_tasks.dart';
 import 'package:music_app/utils/music_player_tools/audio_stream.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:provider/provider.dart';
 
 void _audioPlayerTaskEntrypoint() async {
   AudioServiceBackground.run(() => AudioPlayerTask());
@@ -52,30 +54,49 @@ class _PlayerState extends State<Player> {
   }
 
   prepareService() async {
-    final player = AudioPlayer();
-    var duration = await player.setUrl(widget.soundUrl);
-    print("Duration ----->" + duration.inMilliseconds.toString());
 
-    await AudioService.start(
-      backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
-      androidNotificationChannelName: 'Audio Service Demo',
-      // Enable this if you want the Android service to exit the foreground state on pause.
-      //androidStopForegroundOnPause: true,
-      androidNotificationColor: 0xFF2196f3,
-      androidNotificationIcon: 'mipmap/ic_launcher',
-      androidEnableQueue: true,
-    );
 
-    await AudioService.updateQueue([
-      MediaItem(
-        id: widget.soundUrl,
-        album: "",
-        title: widget.trackName,
-        artist: widget.artist,
-        duration: duration,
-        artUri: widget.albumImageUrl,
-      )
-    ]);
+
+    if (widget.trackName == null) {
+      final player = AudioPlayer();
+      var duration = await player.setUrl(widget.soundUrl);
+      print("Duration ----->" + duration.inMilliseconds.toString());
+      await AudioService.start(
+        backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
+        androidNotificationChannelName: 'Audio Service Demo',
+        // Enable this if you want the Android service to exit the foreground state on pause.
+        //androidStopForegroundOnPause: true,
+        androidNotificationColor: 0xFF2196f3,
+        androidNotificationIcon: 'mipmap/ic_launcher',
+        androidEnableQueue: true,
+      );
+      await AudioService.addQueueItems(context.read<AlbumModel>().queue);
+    } else {
+      final player = AudioPlayer();
+      var duration = await player.setUrl(widget.soundUrl);
+      print("Duration ----->" + duration.inMilliseconds.toString());
+
+
+      await AudioService.start(
+        backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
+        androidNotificationChannelName: 'Audio Service Demo',
+        // Enable this if you want the Android service to exit the foreground state on pause.
+        //androidStopForegroundOnPause: true,
+        androidNotificationColor: 0xFF2196f3,
+        androidNotificationIcon: 'mipmap/ic_launcher',
+        androidEnableQueue: true,
+      );
+      await AudioService.addQueueItems([
+        MediaItem(
+          id: widget.soundUrl,
+          album: "",
+          title: widget.trackName,
+          artist: widget.artist,
+          duration: duration,
+          artUri: widget.albumImageUrl,
+        )
+      ]);
+    }
   }
 
   @override
@@ -85,7 +106,7 @@ class _PlayerState extends State<Player> {
         builder: (ctx, snapshot) {
           final screenState = snapshot.data;
           final queue = screenState?.queue;
-          final mediaItem = screenState?.mediaItem;
+          final MediaItem mediaItem = screenState?.mediaItem;
           final state = screenState?.playbackState;
           final processingState =
               state?.processingState ?? AudioProcessingState.none;
@@ -102,8 +123,8 @@ class _PlayerState extends State<Player> {
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        _trackImage(albumImageUrl),
-                        _trackInfo(artist, trackName),
+                        _trackImage(mediaItem.artUri),
+                        _trackInfo(mediaItem.artist, mediaItem.title),
                         _trackOptions(),
 //                _timeAndSeeker(),
                         positionIndicator(mediaItem, state),

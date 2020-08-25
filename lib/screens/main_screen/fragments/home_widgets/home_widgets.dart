@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/screens/main_screen/fragments/home_fragment.dart';
 import 'package:music_app/screens/player_screen/player_screen.dart';
@@ -145,14 +146,17 @@ Widget topTrackList({List<HomeTrack> tracks, bool shrink}) {
 Widget _topTrackItem(HomeTrack track, bool shrink, context) {
   return InkWell(
     onTap: () {
-      Router.to(
-          context,
-          PlayerScreen(
-            albumImageUrl: baseUrl + track.album.albumImageUrl.elementAt(0).url,
-            artist: track.artist.artistName,
-            trackName: track.track.trackName,
-            soundUrl: baseUrl + track.track.trackSoundUrl.elementAt(0).url,
-          ));
+
+      AudioService.stop().then((value) {
+        Router.to(
+            context,
+            PlayerScreen(
+              albumImageUrl: baseUrl + track.album.albumImageUrl.elementAt(0).url,
+              artist: track.artist.artistName,
+              trackName: track.track.trackName,
+              soundUrl: baseUrl + track.track.trackSoundUrl.elementAt(0).url,
+            ));      });
+
     },
     child: Padding(
       padding: const EdgeInsets.only(top: 8.0, bottom: 8, left: 18, right: 18),

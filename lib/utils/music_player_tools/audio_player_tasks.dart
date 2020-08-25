@@ -29,9 +29,14 @@ class AudioPlayerTask extends BackgroundAudioTask {
   void onAddQueueItem(MediaItem mediaItem) {
     // TODO: implement onAddQueueItem
     super.onAddQueueItem(mediaItem);
-//    _queue.removeLast();
+
+//    _queue = queue;
     _queue.add(mediaItem);
+
+
     AudioServiceBackground.setQueue(_queue);
+    onSkipToNext();
+
   }
 
   @override
@@ -45,6 +50,16 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onUpdateQueue(List<MediaItem> queue) {
     _queue = queue;
+
+
+    AudioServiceBackground.setQueue(_queue);
+    onSkipToNext();
+
+    return super.onUpdateQueue(queue);
+  }
+
+  @override
+  void onStart(Map<String, dynamic> params) {
     _playerStateSubscription = _audioPlayer.playbackStateStream
         .where((state) => state == AudioPlaybackState.completed)
         .listen((state) {
@@ -52,7 +67,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     });
     _eventSubscription = _audioPlayer.playbackEventStream.listen((event) {
       final bufferingState =
-          event.buffering ? AudioProcessingState.buffering : null;
+      event.buffering ? AudioProcessingState.buffering : null;
       switch (event.state) {
         case AudioPlaybackState.paused:
           _setState(
@@ -72,19 +87,17 @@ class AudioPlayerTask extends BackgroundAudioTask {
             position: event.position,
           );
           break;
+        case AudioPlaybackState.stopped:
+          _setState(
+            processingState: _skipState ?? AudioProcessingState.stopped,
+            position: event.position,
+          );
+          break;
         default:
           break;
       }
     });
-
-    AudioServiceBackground.setQueue(_queue);
-    onSkipToNext();
-
-    return super.onUpdateQueue(queue);
   }
-
-  @override
-  void onStart(Map<String, dynamic> params) {}
 
   void _handlePlaybackCompleted() {
     if (hasNext) {
